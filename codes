@@ -1,0 +1,182 @@
+NETWORK 1
+- Network:	192.168.1.0	255.255.255.192
+- First host:	192.168.1.1
+- DHCP:		192.168.1.60
+- Switch (SW1):	192.168.1.61	
+- Router (R1):	192.168.1.62
+- Broadcast:	192.168.1.63
+
+NETWORK 2
+- Network:	192.168.1.64	255.255.255.192
+- First host:	192.168.1.65
+- DHCP:		192.168.1.124
+- Switch (SW2):	192.168.1.125	
+- Router (R2):	192.168.1.126
+- Broadcast:	192.168.1.127
+
+NETWORK 3
+- Network:	192.168.1.128	255.255.255.192
+- First host:	192.168.1.129
+- DHCP:		192.168.1.188
+- Switch (SW3):	192.168.1.189	
+- Router (R3):	192.168.1.190
+- Broadcast:	192.168.1.191
+
+R1 <--> ISP
+- Network:	10.0.0.0	255.255.255.252
+- R1:		10.0.0.1	
+- ISP:		10.0.0.2
+- Broadcast	10.0.0.3
+
+R2 <--> ISP
+- Network:	10.0.0.4	255.255.255.252
+- R2:		10.0.0.5	
+- ISP:		10.0.0.6
+- Broadcast	10.0.0.7
+
+R3 <--> ISP
+- Network:	10.0.0.8	255.255.255.252
+- R2:		10.0.0.9	
+- ISP:		10.0.0.10
+- Broadcast	10.0.0.11
+
+======= ISP =======
+>en
+#conf t
+#int s0/1/0
+#no shut
+#ip address 10.0.0.2 255.255.255.252
+#end
+
+#int s0/1/1
+#no shut
+#ip address 10.0.0.6 255.255.255.252
+#end
+
+#int s0/2/0
+#no shut
+#ip address 10.0.0.10 255.255.255.252
+#end
+
+#int g0/0/0
+#no shut
+#ip address 8.8.8.1 255.255.255.0
+#end
+
+#conf t
+#router ospf 1
+#network 10.0.0.0 0.0.0.3 area 0
+#network 10.0.0.4 0.0.0.3 area 0
+#network 10.0.0.8 0.0.0.3 area 0
+#network 8.8.8.1 0.0.0.255 area 0
+#end
+
+#conf t
+#int g0/0/0
+#no shut
+#ip address 8.8.8.1 255.255.255.0
+#end
+
+======= R1 =======
+>en
+#conf t
+#int g0/0/0
+#no shut
+#ip address 192.168.1.62 255.255.255.192
+#end
+
+#conf t
+#int s0/1/0
+#no shut
+#ip address 10.0.0.1 255.255.255.252
+#end
+
+#conf t
+#router ospf 1
+#network 192.168.1.0 0.0.0.63 area 0
+#network 10.0.0.0 0.0.0.3 area 0
+#end
+
+======= SW1 =======
+>en
+#conf t
+#int vlan 1
+#no shut
+#ip address 192.168.1.61 255.255.255.192
+#end
+#conf t
+#ip default-gateway 192.168.1.62
+#end
+
+======= R2 =======
+>en
+#conf t
+#int g0/0/0
+#no shut
+#ip address 192.168.1.126 255.255.255.192
+#end
+
+#conf t
+#int s0/1/0
+#no shut
+#ip address 10.0.0.5 255.255.255.252
+#end
+
+#conf t
+#router ospf 1
+#network 192.168.1.64 0.0.0.63 area 0
+#network 10.0.0.4 0.0.0.3 area 0
+#end
+
+======= SW2 =======
+>en
+#conf t
+#int vlan 1
+#no shut
+#ip address 192.168.1.125 255.255.255.192
+#end
+#conf t
+#ip default-gateway 192.168.1.126
+#end
+
+======= R3 =======
+>en
+#conf t
+#int g0/0/0
+#no shut
+#ip address 192.168.1.190 255.255.255.192
+#end
+
+#conf t
+#int s0/1/0
+#no shut
+#ip address 10.0.0.9 255.255.255.252
+#end 
+
+#conf t
+#router ospf 1
+#network 192.168.1.128 0.0.0.63 area 0
+#network 10.0.0.8 0.0.0.3 area 0
+#end
+
+======= SW3 =======
+>en
+#conf t
+#int vlan 1
+#no shut
+#ip address 192.168.1.189 255.255.255.192
+#end
+#conf t
+#ip default-gateway 192.168.1.190
+#end
+
+======= Internet =======
+>en
+#conf t
+#int vlan 1
+#no shut
+#ip address 8.8.8.2 255.255.255.0
+#end
+#conf t
+#ip default-gateway 8.8.8.1
+#end
