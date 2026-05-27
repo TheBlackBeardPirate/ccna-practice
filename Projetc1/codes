@@ -1,3 +1,9 @@
+OFFICES IP RANGE
+- 192.168.1.0/24
+
+ISP LINKS IP RANGE
+- 10.0.0.0/28
+
 NETWORK 1
 - Network:	192.168.1.0	255.255.255.192
 - First host:	192.168.1.1
@@ -36,7 +42,7 @@ R2 <--> ISP
 
 R3 <--> ISP
 - Network:	10.0.0.8	255.255.255.252
-- R2:		10.0.0.9	
+- R3:		10.0.0.9	
 - ISP:		10.0.0.10
 - Broadcast	10.0.0.11
 
